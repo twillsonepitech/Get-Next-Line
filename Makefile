@@ -13,8 +13,8 @@ CC	?=	gcc
 
 RM	?=	rm -rf
 
-NAME	:=	gnl.so
-LDFLAGS	=	# can be [-lm -> math], [-lpthread -> pthreads]...
+NAME	:=	libgnl.so
+LDFLAGS	=	-shared
 
 TESTS_BIN	:=	*.gc*
 TESTS_BIN_NAME	:=	unit_tests
@@ -24,11 +24,9 @@ CPPFLAGS	+=	-Wall -Wextra -Werror -iquote ./includes
 
 CFLAGS	+=	-fPIC -pedantic
 
-MAIN	=	${addsuffix .c, ${addprefix ./, main}}
 SRCS	=	${addsuffix .c, ${addprefix ./, get_next_line }}
 
-ALL_SRCS	:=	${MAIN}
-ALL_SRCS	+=	${SRCS}
+ALL_SRCS	:=	${SRCS}
 
 TESTS_SRCS	:=	${SRCS}
 TESTS_SRCS	+=	${addsuffix .c, ${addprefix tests/tests_, get_next_line }}
