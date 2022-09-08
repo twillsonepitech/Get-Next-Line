@@ -1,12 +1,12 @@
 # START of Makefile color and typo of messages
-_END=$'\033[0m
-_BOLD=$'\033[1m
-_UNDER=$'\033[4m
+_END='\033[0m'
+_BOLD='\033[1m'
+_UNDER='\033[4m'
 
-_RED=$'\033[31m
-_GREEN=$'\033[32m
-_YELLOW=$'\033[33m
-_BLUE=$'\033[34m
+_RED='\033[31m'
+_GREEN='\033[32m'
+_YELLOW='\033[33m'
+_BLUE='\033[34m'
 # END	of Makefile color and typo of messages
 
 CC	?=	gcc
@@ -14,15 +14,14 @@ CC	?=	gcc
 RM	?=	rm -rf
 
 NAME	:=	libgnl.so
-LDFLAGS	=	-shared
 
 TESTS_BIN	:=	*.gc*
 TESTS_BIN_NAME	:=	unit_tests
 TESTS_LIBS	:=	-lcriterion --coverage
 
-CPPFLAGS	+=	-Wall -Wextra -Werror -iquote ./includes
-
-CFLAGS	+=	-fPIC -pedantic
+CFLAGS		+=	-Wall -Wextra -Werror -fPIC -pedantic
+CPPFLAGS	+=	-iquote ./includes
+LDFLAGS		=	-shared
 
 SRCS	=	${addsuffix .c, ${addprefix ./, get_next_line }}
 
@@ -34,11 +33,16 @@ TESTS_SRCS	+=	${addsuffix .c, ${addprefix tests/tests_, get_next_line }}
 OBJS	=	${ALL_SRCS:.c=.o}
 TESTS_OBJS	:=	${TESTS_SRCS:.c=.o}
 
+%.o : %.c
+	@$ $(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+	@echo "$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@ ["$(_GREEN)"OK"$(_END)"]"
+.SUFFIXES: .o .c
+
 all:	${NAME}
 
 ${NAME}:	${OBJS}
 	@${CC} -o ${NAME} ${OBJS} ${LDFLAGS}
-	@echo "${_BOLD}${_GREEN}Executable has been compiled.${_END}"
+	@echo ""${_BOLD}""${_GREEN}"Executable has been compiled."${_END}""
 
 clean:
 	${RM} ${OBJS}
