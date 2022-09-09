@@ -25,4 +25,6 @@
 #define READ_FAIL           (-1)
 #define PUT_ERROR(err)      fprintf(stderr, "Error: [%s].\n", err)
 
+char *get_next_line(const int fd);
+
 #endif /* !GET_NEXT_LINE_H_ */

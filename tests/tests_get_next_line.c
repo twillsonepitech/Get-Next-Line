@@ -2,8 +2,8 @@
 #include <criterion/redirect.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include "../get_next_line.h"
 
-char *get_next_line(const int fd);
 int fd = -1;
 
 void open_file(const char *file)
