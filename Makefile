@@ -13,7 +13,9 @@ CC	?=	gcc
 
 RM	?=	rm -rf
 
-NAME	:=	libgnl.so
+NAME	=	libgnl.so
+
+ARCHIVER	=	ar
 
 TESTS_BIN	:=	*.gc*
 TESTS_BIN_NAME	:=	unit_tests
@@ -41,8 +43,9 @@ TESTS_OBJS	:=	${TESTS_SRCS:.c=.o}
 all:	${NAME}
 
 ${NAME}:	${OBJS}
-	@${CC} -o ${NAME} ${OBJS} ${LDFLAGS}
-	@echo ""${_BOLD}""${_GREEN}"Executable has been compiled."${_END}""
+	@$ $(CC) $(LDFLAGS) $(OBJS) -o $@
+	@echo "$(CC) $(LDFLAGS) $(OBJS) -o $@ \
+	["$(_GREEN)"LINKING OK"$(_END)"]"
 
 clean:
 	${RM} ${OBJS}
@@ -73,4 +76,7 @@ valgrind:	${TESTS_OBJS}
 	${RM} ${TESTS_OBJS}
 	${RM} ${TESTS_BIN_NAME}
 
-.PHONY:	all clean fclean re debug tests_run valgrind
+static: ${OBJS}
+	${ARCHIVER} rc ${NAME:.so=.a} ${OBJS}
+
+.PHONY:	all clean fclean re debug tests_run valgrind static
