@@ -22,7 +22,7 @@ TESTS_BIN_NAME	:=	unit_tests
 TESTS_LIBS	:=	-lcriterion --coverage
 
 CFLAGS		+=	-Wall -Wextra -Werror -fPIC -pedantic
-CPPFLAGS	+=	-iquote ./includes
+CPPFLAGS	+=	-iquote ./include
 LDFLAGS		=	-shared
 
 SRCS	=	${addsuffix .c, ${addprefix ./, get_next_line }}
@@ -50,6 +50,7 @@ ${NAME}:	${OBJS}
 clean:
 	${RM} ${OBJS}
 	${RM} ${NAME}
+	${RM} ${NAME:.so=.a}
 	${RM} logs.out
 
 fclean:	clean
