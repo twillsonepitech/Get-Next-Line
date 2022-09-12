@@ -192,9 +192,9 @@ int read_line_into_buffer(const int fd, char **__restrict ptr_container, char **
         if (FUNCTION_SUCCESS == return_from_function)
         {
             return_from_function = manage_buffer(ptr_read, ptr_container, ptr_return);
+            free_args_va_arguments(1, ptr_read);
             if (FUNCTION_FAILURE == return_from_function)
             {
-                free_args_va_arguments(1, ptr_read);
                 return FUNCTION_FAILURE;
             }
             else
@@ -218,13 +218,9 @@ int read_line_into_buffer(const int fd, char **__restrict ptr_container, char **
             return_from_function = join(ptr_return, ptr_read);
             if (FUNCTION_FAILURE == return_from_function)
             {
-                free_args_va_arguments(1, ptr_read);
                 return FUNCTION_FAILURE;
             }
-            else
-            {
-                free_args_va_arguments(1, ptr_read);
-            }
+            free_args_va_arguments(1, ptr_read);
             if (READ_ZERO == readline)
             {
                 return EXIT_EOF;
@@ -239,7 +235,6 @@ int read_line_into_buffer(const int fd, char **__restrict ptr_container, char **
             }
         }
     }
-    free_args_va_arguments(1, ptr_read);
     return FUNCTION_SUCCESS;
 }
 
