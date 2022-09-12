@@ -257,12 +257,14 @@ char *get_next_line(const int fd)
     }
     if (EXIT_EOF == return_from_function)
     {
+        free_args_va_arguments(1, ptr_container);
         if (strlen(ptr_return) != 0)
         {
             return ptr_return;
         }
         else
         {
+            free_args_va_arguments(1, ptr_return);
             return NULL;
         }
     }
