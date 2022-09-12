@@ -16,9 +16,10 @@
 #include <errno.h>
 #include <stdbool.h>
 #include <stdarg.h>
-#include "get_next_line.h"
+#include <stdint.h>
+#include "./includes/get_next_line.h"
 
-void __free_vl(int size_args, ...)
+void free_args_va_arguments(const int size_args, ...)
 {
     va_list ap;
     int __i = 0;
@@ -38,31 +39,15 @@ void __free_vl(int size_args, ...)
     va_end(ap);
 }
 
-int contain_end_of_line(char *ptr)
+int join(char **__restrict __dest, const char *__restrict __src)
 {
-    int index_per_iteration;
-
-    index_per_iteration = INIT_INTEGER;
-    while (ptr[index_per_iteration] != '\0')
-    {
-        if (ptr[index_per_iteration] == '\n')
-        {
-            return FUNCTION_SUCCESS;
-        }
-        index_per_iteration++;
-    }
-    return FUNCTION_FAILURE;
-}
-
-int join(char **dest, const char *src)
-{
-    size_t dest_size = NULL == *dest ? 0 : strlen(*dest);
-    size_t source_size = NULL == src ? 0 : strlen(src);
+    size_t dest_size = NULL == *__dest ? 0 : strlen(*__dest);
+    size_t source_size = NULL == __src ? 0 : strlen(__src);
     char *tempr;
     int index_per_iteration;
     int number_of_index_fill;
 
-    tempr = (char *)malloc(sizeof(char) * (source_size + dest_size + 1));
+    tempr = (char *) malloc(sizeof(char) * (source_size + dest_size + 1));
     if (NULL == tempr)
     {
         PUT_ERROR(strerror(errno));
@@ -72,24 +57,24 @@ int join(char **dest, const char *src)
     index_per_iteration = INIT_INTEGER;
     while (index_per_iteration < (int)(dest_size))
     {
-        tempr[number_of_index_fill] = (*dest)[index_per_iteration];
+        tempr[number_of_index_fill] = (*__dest)[index_per_iteration];
         number_of_index_fill++;
         index_per_iteration++;
     }
     index_per_iteration = INIT_INTEGER;
     while (index_per_iteration < (int)(source_size))
     {
-        tempr[number_of_index_fill] = src[index_per_iteration];
+        tempr[number_of_index_fill] = __src[index_per_iteration];
         number_of_index_fill++;
         index_per_iteration++;
     }
     tempr[number_of_index_fill] = '\0';
-    free(*dest);
-    *dest = tempr;
+    (void) free(*__dest);
+    *__dest = tempr;
     return FUNCTION_SUCCESS;
 }
 
-int get_number_iter_before_end(const char *lineptr, size_t index_start_lineptr, const char end)
+int number_iteration_until_end(const char *__restrict lineptr, size_t index_start_lineptr, const char end)
 {
     int index_per_iteration;
 
@@ -102,28 +87,29 @@ int get_number_iter_before_end(const char *lineptr, size_t index_start_lineptr, 
     return index_per_iteration;
 }
 
-int init_buffer(char **dest, const char *src, size_t index_start_src, const char end)
+int init_buffer(char **__restrict __dest, const char *__restrict __src, size_t index_start_src, const char end)
 {
     int index_per_iteration;
 
-    *dest = (char *)malloc(sizeof(char) * (get_number_iter_before_end(src, index_start_src, end) + 1));
-    if (NULL == *dest)
+    *__dest = (char *)malloc(sizeof(char) * (number_iteration_until_end(__src, index_start_src, end) + 1));
+    if (NULL == *__dest)
     {
         PUT_ERROR(strerror(errno));
         return FUNCTION_FAILURE;
     }
     index_per_iteration = INIT_INTEGER;
-    while (src[index_start_src] != end)
+    while (__src[index_start_src] != end)
     {
-        (*dest)[index_per_iteration] = src[index_start_src];
+        (*__dest)[index_per_iteration] = __src[index_start_src];
         index_start_src++;
         index_per_iteration++;
     }
-    (*dest)[index_per_iteration] = '\0';
+    (*__dest)[index_per_iteration] = '\0';
     return FUNCTION_SUCCESS;
 }
 
-int manage_container_and_return(char *left_buffer, char *right_buffer, char **ptr_container, char **ptr_return)
+int join_return_value(char *__restrict left_buffer, char *__restrict right_buffer,
+        char **__restrict ptr_container, char **__restrict ptr_return)
 {
     int return_from_function;
 
@@ -150,7 +136,7 @@ int manage_container_and_return(char *left_buffer, char *right_buffer, char **pt
     return FUNCTION_SUCCESS;
 }
 
-int manage_end_of_line(char *buffer, char **ptr_container, char **ptr_return)
+int manage_buffer(char *__restrict buffer, char **__restrict ptr_container, char **__restrict ptr_return)
 {
     char *left_buffer;
     char *right_buffer;
@@ -164,20 +150,20 @@ int manage_end_of_line(char *buffer, char **ptr_container, char **ptr_return)
     return_from_function = init_buffer(&right_buffer, buffer, strlen(left_buffer), '\0');
     if (FUNCTION_FAILURE == return_from_function)
     {
-        __free_vl(1, left_buffer);
+        free_args_va_arguments(1, left_buffer);
         return FUNCTION_FAILURE;
     }
-    return_from_function = manage_container_and_return(left_buffer, right_buffer, ptr_container, ptr_return);
+    return_from_function = join_return_value(left_buffer, right_buffer, ptr_container, ptr_return);
     if (FUNCTION_FAILURE == return_from_function)
     {
-        __free_vl(2, left_buffer, right_buffer);
+        free_args_va_arguments(2, left_buffer, right_buffer);
         return FUNCTION_FAILURE;
     }
-    __free_vl(2, left_buffer, right_buffer);
+    free_args_va_arguments(2, left_buffer, right_buffer);
     return FUNCTION_SUCCESS;
 }
 
-int read_line_into_buffer(const int fd, char **ptr_container, char **ptr_return)
+int read_line_into_buffer(const int fd, char **__restrict ptr_container, char **__restrict ptr_return)
 {
     char *ptr_read;
     ssize_t readline;
@@ -195,20 +181,20 @@ int read_line_into_buffer(const int fd, char **ptr_container, char **ptr_return)
         if (FUNCTION_FAILURE == readline)
         {
             PUT_ERROR(strerror(errno));
-            __free_vl(1, ptr_read);
+            free_args_va_arguments(1, ptr_read);
             return FUNCTION_FAILURE;
         }
         else
         {
             ptr_read[readline] = '\0';
         }
-        return_from_function = contain_end_of_line(ptr_read);
+        return_from_function = CONTAINS_CHAR(ptr_read, '\n', return_from_function);
         if (FUNCTION_SUCCESS == return_from_function)
         {
-            return_from_function = manage_end_of_line(ptr_read, ptr_container, ptr_return);
+            return_from_function = manage_buffer(ptr_read, ptr_container, ptr_return);
             if (FUNCTION_FAILURE == return_from_function)
             {
-                __free_vl(1, ptr_read);
+                free_args_va_arguments(1, ptr_read);
                 return FUNCTION_FAILURE;
             }
             else
@@ -221,23 +207,23 @@ int read_line_into_buffer(const int fd, char **ptr_container, char **ptr_return)
             return_from_function = join(ptr_return, *ptr_container);
             if (FUNCTION_FAILURE == return_from_function)
             {
-                __free_vl(1, ptr_read);
+                free_args_va_arguments(1, ptr_read);
                 return FUNCTION_FAILURE;
             }
             else
             {
-                __free_vl(1, *ptr_container);
+                free_args_va_arguments(1, *ptr_container);
                 *ptr_container = NULL;
             }
             return_from_function = join(ptr_return, ptr_read);
             if (FUNCTION_FAILURE == return_from_function)
             {
-                __free_vl(1, ptr_read);
+                free_args_va_arguments(1, ptr_read);
                 return FUNCTION_FAILURE;
             }
             else
             {
-                __free_vl(1, ptr_read);
+                free_args_va_arguments(1, ptr_read);
             }
             if (READ_ZERO == readline)
             {
@@ -253,7 +239,7 @@ int read_line_into_buffer(const int fd, char **ptr_container, char **ptr_return)
             }
         }
     }
-    __free_vl(1, ptr_read);
+    free_args_va_arguments(1, ptr_read);
     return FUNCTION_SUCCESS;
 }
 
@@ -264,10 +250,21 @@ char *get_next_line(const int fd)
     int return_from_function;
 
     return_from_function = read_line_into_buffer(fd, &ptr_container, &ptr_return);
-    if (FUNCTION_FAILURE == return_from_function || EXIT_EOF == return_from_function)
+    if (FUNCTION_FAILURE == return_from_function)
     {
-        __free_vl(2, ptr_container, ptr_return);
+        free_args_va_arguments(2, ptr_container, ptr_return);
         return NULL;
+    }
+    if (EXIT_EOF == return_from_function)
+    {
+        if (strlen(ptr_return) != 0)
+        {
+            return ptr_return;
+        }
+        else
+        {
+            return NULL;
+        }
     }
     return ptr_return;
 }

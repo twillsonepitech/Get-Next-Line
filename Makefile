@@ -22,7 +22,7 @@ TESTS_BIN_NAME	:=	unit_tests
 TESTS_LIBS	:=	-lcriterion --coverage
 
 CFLAGS		+=	-Wall -Wextra -Werror -fPIC -pedantic
-CPPFLAGS	+=	-iquote ./include
+CPPFLAGS	+=	-iquote ./includes
 LDFLAGS		=	-shared
 
 SRCS	=	${addsuffix .c, ${addprefix ./, get_next_line }}

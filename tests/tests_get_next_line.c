@@ -2,7 +2,7 @@
 #include <criterion/redirect.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include "../get_next_line.h"
+#include "get_next_line.h"
 
 int fd = -1;
 
@@ -53,7 +53,7 @@ Test(get_next_line_all_file, read_file)
                             "#define READ_ZERO           (0)\n"
                             "#define READ_FAIL           (-1)\n"
                             "#define PUT_ERROR(err)      fprintf(stderr, \"Error: [%s].\\n\", err)\n\n"
-                            "#endif /* !GET_NEXT_LINE_H_ */";
+                            "#endif /* !GET_NEXT_LINE_H_ */\n";
 
     open_file("tests/file.txt");
     char *got = (char *)malloc(sizeof(char) * (strlen(expected) + 1));
