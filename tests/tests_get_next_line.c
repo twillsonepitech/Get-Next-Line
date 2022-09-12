@@ -22,7 +22,7 @@ Test(get_next_line_test_read_line_ptr, read_line)
 {
     open_file("tests/data.txt");
     char *expected = "Confidence is so overrated.";
-    char *got = get_next_line(fd);
+    char *got = get_next_line(fd, SIMPLE_MODE);
     cr_assert_str_eq(got, expected);
     close_file();
 }
@@ -62,7 +62,7 @@ Test(get_next_line_all_file, read_file)
     int it = 0;
     while (true)
     {
-        char *s = get_next_line(fd);
+        char *s = get_next_line(fd, MULTIPLE_MODE);
         if (s == NULL)
             break;
         for (size_t i = 0; i < strlen(s); i++) {

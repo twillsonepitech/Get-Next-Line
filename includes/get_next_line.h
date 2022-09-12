@@ -13,7 +13,7 @@
 # define GET_NEXT_LINE_H_
 
 #if !defined(READ_SIZE)
-# define READ_SIZE      (400)
+# define READ_SIZE      (100)
 #endif // READ_SIZE
 
 #define INIT_INTEGER        (0)
@@ -25,6 +25,12 @@
 #define EXIT_EOF            (1)
 #define READ_ZERO           (0)
 #define READ_FAIL           (-1)
+#define ZERO                (0)
+#define ONE                 (1)
+#define TWO                 (2)
+#define NIL                 ('\0')
+#define SIMPLE_MODE         (ZERO)
+#define MULTIPLE_MODE       (ONE)
 #define PUT_ERROR(err)      fprintf(stderr, "Error: [%s].\n", err)
 #define CONTAINS_CHAR(s, __c, ret)   \
   (__extension__                  \
@@ -115,9 +121,10 @@ int read_line_into_buffer(const int fd, char **__restrict ptr_container, char **
 /**
  * @brief Get the next line object.
  * 
- * @param fd File descriptor
+ * @param __fd File descriptor
+ * @param __mode Simple mode, means one call to gnl, otherwise it's a loop, so Multiple mode
  * @return char* 
  */
-char *get_next_line(const int fd);
+char *get_next_line(const int __fd, const int __mode);
 
 #endif /* !GET_NEXT_LINE_H_ */

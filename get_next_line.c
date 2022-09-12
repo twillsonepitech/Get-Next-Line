@@ -154,12 +154,11 @@ int manage_buffer(char *__restrict buffer, char **__restrict ptr_container, char
         return FUNCTION_FAILURE;
     }
     return_from_function = join_return_value(left_buffer, right_buffer, ptr_container, ptr_return);
+    free_args_va_arguments(2, left_buffer, right_buffer);
     if (FUNCTION_FAILURE == return_from_function)
     {
-        free_args_va_arguments(2, left_buffer, right_buffer);
         return FUNCTION_FAILURE;
     }
-    free_args_va_arguments(2, left_buffer, right_buffer);
     return FUNCTION_SUCCESS;
 }
 
@@ -238,13 +237,13 @@ int read_line_into_buffer(const int fd, char **__restrict ptr_container, char **
     return FUNCTION_SUCCESS;
 }
 
-char *get_next_line(const int fd)
+char *get_next_line(const int __fd, const int __mode)
 {
     static char *ptr_container = NULL;
     char *ptr_return = NULL;
     int return_from_function;
 
-    return_from_function = read_line_into_buffer(fd, &ptr_container, &ptr_return);
+    return_from_function = read_line_into_buffer(__fd, &ptr_container, &ptr_return);
     if (FUNCTION_FAILURE == return_from_function)
     {
         free_args_va_arguments(2, ptr_container, ptr_return);
@@ -262,6 +261,10 @@ char *get_next_line(const int fd)
             free_args_va_arguments(1, ptr_return);
             return NULL;
         }
+    }
+    if (SIMPLE_MODE == __mode)
+    {
+        free_args_va_arguments(1, ptr_container);
     }
     return ptr_return;
 }
