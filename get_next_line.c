@@ -265,6 +265,7 @@ char *get_next_line(const int __fd, const int __mode)
     if (SIMPLE_MODE == __mode)
     {
         free_args_va_arguments(1, ptr_container);
+        ptr_container = NULL;
     }
     return ptr_return;
 }
