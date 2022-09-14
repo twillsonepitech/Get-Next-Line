@@ -29,6 +29,7 @@
 #define ONE                 (1)
 #define TWO                 (2)
 #define NIL                 ('\0')
+#define EOL                 ('\n')
 #define SIMPLE_MODE         (ZERO)
 #define MULTIPLE_MODE       (ONE)
 #define PUT_ERROR(err)      fprintf(stderr, "Error: [%s].\n", err)
